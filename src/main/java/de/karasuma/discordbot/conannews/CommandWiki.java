@@ -2,6 +2,10 @@ package de.karasuma.discordbot.conannews;
 
 import de.karasuma.discordbot.commandhandling.Command;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 
 public class CommandWiki implements Command {
 
@@ -9,6 +13,7 @@ public class CommandWiki implements Command {
     private long coolDownTimer = 10000;
     private WikiBot wikibot;
     private WebsiteIDSearcher websiteIDSearcher = new WebsiteIDSearcher();
+    private WikiArticleChecker wikiArticleChecker = new WikiArticleChecker();
 
     public CommandWiki(WikiBot wikiBot) {
         this.wikibot = wikiBot;
@@ -43,18 +48,70 @@ public class CommandWiki implements Command {
                     urls[0] = temp;
                 }
 
+                /*
+                Get Jsoup Document so one connection is enough for both wikiArticleChecker and websiteIDSearcher
+                 */
 
-                if (urls.length > 1) {
-                    indicatorTag = websiteIDSearcher.searchForID(urls);
-                    if (!indicatorTag.equals("")) {
-                        indicatorTag = "#" + indicatorTag;
+                Document doc = null;
+                try {
+                    doc = Jsoup.connect(urls[0]).get();
+
+                    /*
+                    Check if article exists.
+                    If article does not exists answer user with an error message.
+                    */
+                    if (!wikiArticleChecker.articleExists(doc)) {
+                        event.getTextChannel()
+                                .sendMessage("Der Artikel \"" + args[0] + "\" unter "
+                                        + urls[0] + " scheint nicht vorhanden zu sein.")
+                                .queue();
+
+                        Thread cooldownThread = new Thread(new CoolDownRunnable());
+                        cooldownThread.start();
+                        return;
                     }
-                }
-            }
-            event.getTextChannel().sendMessage(urls[0] + indicatorTag).queue();
 
-            Thread cooldownThread = new Thread(new CoolDownRunnable());
-            cooldownThread.start();
+                    /*
+                    Check if article exists.
+                    If article does not exists answer user with an error message.
+                    */
+                    if (!wikiArticleChecker.articleExists(doc)) {
+                        event.getTextChannel()
+                                .sendMessage("Der Artikel \"" + args[0] + "\" unter "
+                                        + urls[0] + " scheint nicht vorhanden zu sein.")
+                                .queue();
+
+                        Thread cooldownThread = new Thread(new CoolDownRunnable());
+                        cooldownThread.start();
+                        return;
+                    }
+
+                    if (urls.length > 1) {
+                        indicatorTag = websiteIDSearcher.searchForID(doc, urls[1]);
+                        if (!indicatorTag.equals("")) {
+                            indicatorTag = "#" + indicatorTag;
+                        }
+                    }
+
+                    event.getTextChannel().sendMessage(urls[0] + indicatorTag).queue();
+
+                    Thread cooldownThread = new Thread(new CoolDownRunnable());
+                    cooldownThread.start();
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //When Jsoup Document is null (error fetching url)
+                event.getTextChannel()
+                        .sendMessage("Der Artikel \"" + args[0] + "\" unter "
+                                + urls[0] + " scheint nicht vorhanden zu sein.")
+                        .queue();
+
+                Thread cooldownThread = new Thread(new CoolDownRunnable());
+                cooldownThread.start();
+
+            }
         }
     }
 
