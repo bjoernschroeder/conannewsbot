@@ -15,7 +15,7 @@ import org.json.simple.parser.ParseException;
 public class UserJoinedListener extends ListenerAdapter {
 
     static String welcomeMessageSplit1 = "Herzlich willkommen, ";
-    static String welcomeMessageSplit2 = " <:taeter:442749524746698752>  Nimm dir einen Moment Zeit, um unsere <#448331066206322718> durchzulesen, beachte unsere Kanalthemen und sei gegrüßt!";
+    static String welcomeMessageSplit2 = "<:taeter:442749524746698752> Nimm dir einen Moment Zeit, um unsere <#448331066206322718> durchzulesen, beachte unsere Kanalthemen und sei gegrüßt!";
     static String filePath = "./message.json";
     String message = "";
     boolean readableFile = false;
