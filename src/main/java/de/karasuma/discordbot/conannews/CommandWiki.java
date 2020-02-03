@@ -1,14 +1,5 @@
 package de.karasuma.discordbot.conannews;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
-
 import de.karasuma.discordbot.commandhandling.Command;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -17,6 +8,7 @@ public class CommandWiki implements Command {
     private String conanWikiBaseURL = "https://conanwiki.org/wiki/";
     private long coolDownTimer = 10000;
     private WikiBot wikibot;
+    private WebsiteIDSearcher websiteIDSearcher = new WebsiteIDSearcher();
 
     public CommandWiki(WikiBot wikiBot) {
         this.wikibot = wikiBot;
@@ -53,7 +45,10 @@ public class CommandWiki implements Command {
 
 
                 if (urls.length > 1) {
-                    indicatorTag = searchForIDInWebsite(urls);
+                    indicatorTag = websiteIDSearcher.searchForID(urls);
+                    if (!indicatorTag.equals("")) {
+                        indicatorTag = "#" + indicatorTag;
+                    }
                 }
             }
             event.getTextChannel().sendMessage(urls[0] + indicatorTag).queue();
@@ -71,52 +66,6 @@ public class CommandWiki implements Command {
     @Override
     public String help() {
         return null;
-    }
-
-    private String searchForIDInWebsite(String[] urls) {
-        BufferedReader br = null;
-        String indicatorTag = "";
-
-        try {
-            URL url = new URL(urls[0]);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
-            urlConnection.connect();
-
-            //when redirected get redirected URL
-            URL urlRedirect = url;
-
-            if (urlConnection.getResponseCode() == 301) {
-                String urlRedirectString = urlConnection.getHeaderField("Location");
-                urlRedirect = new URL (urlRedirectString);
-                HttpURLConnection urlConnectionRedirect = (HttpURLConnection) urlRedirect.openConnection();
-                urlConnectionRedirect.connect();
-            }
-
-            br = new BufferedReader(new InputStreamReader(urlRedirect.openStream(), "UTF-8"));
-            String line = br.readLine();
-            line = br.readLine();
-
-            while (line != null) {
-                if (line.contains("id=")
-                        && line.toLowerCase().contains(urls[1].toLowerCase())
-                        && line.contains("class=\"mw-headline\"")){
-                    int indexOfID = line.indexOf("id=");
-                    int indexOfFirstQuote = line.indexOf("\"", indexOfID);
-                    int indexOfSecondQuote = line.indexOf("\"", indexOfFirstQuote + 1);
-                    indicatorTag = line.substring(indexOfFirstQuote + 1, indexOfSecondQuote);
-                    return "#" + indicatorTag;
-                }
-
-                line = br.readLine();
-            }
-            return indicatorTag;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return indicatorTag;
     }
 
     public class CoolDownRunnable implements Runnable {
