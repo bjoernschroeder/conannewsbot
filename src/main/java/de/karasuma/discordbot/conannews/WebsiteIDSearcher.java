@@ -17,7 +17,7 @@ public class WebsiteIDSearcher {
      * Example: When searching on the website https://conannews.org/wiki/kogoro for a paragraph containing
      * "verg", searchForID returns "Vergangenheit".
      */
-    public String searchForID(Document doc, String id) {
+    String searchForID(Document doc, String id) {
 
         // null check, empty id check
         if (doc == null || id == null || id.isEmpty()) {
