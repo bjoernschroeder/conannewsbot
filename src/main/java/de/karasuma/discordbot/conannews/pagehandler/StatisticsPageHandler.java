@@ -27,14 +27,12 @@ public class StatisticsPageHandler extends PageHandler {
 
     private EmbedBuilder generateStatsMessage(JSONObject stats) {
         DecimalFormat decimalFormat = new DecimalFormatUtil().getDecimalFormatter();
-        double averageEditsPerSite = stats.getInt("edits") / stats.getInt("pages");
         return new EmbedBuilder()
                 .addField("Seiten / Artikel",
                         decimalFormat.format(stats.getInt("pages")) + " / " +
                                 decimalFormat.format(stats.getInt("articles")),
                         true)
                 .addField("Bearbeitungen", decimalFormat.format(stats.getInt("edits")), true)
-                .addField("Bearbeitungen pro Seite im Durchschnitt", decimalFormat.format(averageEditsPerSite), true)
                 .addField("Bilder", decimalFormat.format(stats.getInt("images")), true)
                 .addField("Benutzer / Aktiv", decimalFormat.format(stats.getInt("users")) + " / " +
                         decimalFormat.format(stats.getInt("activeusers")), true)
