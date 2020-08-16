@@ -12,7 +12,7 @@ public class WikiArticleChecker {
      *          false, if article is emtpy / does not exist.
      *          Returns false when fetching URL returns 404.
      */
-    boolean articleExists(Document doc) {
+    public boolean articleExists(Document doc) {
         if (doc == null) {
             return false;
         }
