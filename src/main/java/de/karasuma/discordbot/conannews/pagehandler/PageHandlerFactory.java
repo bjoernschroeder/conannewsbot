@@ -8,6 +8,9 @@ public class PageHandlerFactory {
             return new UserPageHandler();
         } else if (isPageType("special", "spezial", lowerCaseSearchTerm)) {
             return new SpecialPageHandler();
+        } else if (isPageType("statistics", "statistik", lowerCaseSearchTerm)
+                || lowerCaseSearchTerm.startsWith("stats")) {
+            return new StatisticsPageHandler();
         }
 
         return new ArticlePageHandler();
