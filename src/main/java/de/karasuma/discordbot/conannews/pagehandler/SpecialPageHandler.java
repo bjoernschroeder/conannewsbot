@@ -1,6 +1,7 @@
 package de.karasuma.discordbot.conannews.pagehandler;
 
 import de.karasuma.discordbot.conannews.CoolDownHandler;
+import de.karasuma.discordbot.conannews.util.HTTPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
@@ -65,8 +66,6 @@ public class SpecialPageHandler extends PageHandler {
         sendMessage(event, embedBuilder, coolDownHandler);
     }
 
-    //https://conanwiki.org/api.php?action=query&prop=revisions&revids=258376&rvprop=ids|flags|timestamp|user|userid|contentmodel|comment|parsedcomment|content|tags
-
     private JSONObject getDiffInfo(String redirectedUrl) {
         String diffId = redirectedUrl.replace(diffBaseUrl, "");
         try {
@@ -77,7 +76,7 @@ public class SpecialPageHandler extends PageHandler {
                     "&" + RVPROP +
                     "&" + FORMAT + "json"
             );
-            JSONObject response = getRequest(url);
+            JSONObject response = new HTTPUtil().getRequest(url);
             JSONObject pages = response.getJSONObject("query")
                     .getJSONObject("pages");
 
