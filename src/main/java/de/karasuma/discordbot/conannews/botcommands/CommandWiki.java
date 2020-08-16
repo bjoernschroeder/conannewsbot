@@ -1,6 +1,7 @@
-package de.karasuma.discordbot.conannews;
+package de.karasuma.discordbot.conannews.botcommands;
 
 import de.karasuma.discordbot.commandhandling.Command;
+import de.karasuma.discordbot.conannews.CoolDownHandler;
 import de.karasuma.discordbot.conannews.pagehandler.PageHandler;
 import de.karasuma.discordbot.conannews.pagehandler.PageHandlerFactory;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -21,6 +22,10 @@ public class CommandWiki implements Command {
 
         String searchTerm = parseSearchTerm(args);
         System.out.println(searchTerm);
+
+        if (searchTerm.toLowerCase().equals("stats") || searchTerm.toLowerCase().equals("statistics")) {
+            new StatisticsCommand();
+        }
 
         PageHandlerFactory pageHandlerFactory = new PageHandlerFactory();
         PageHandler pageHandler = pageHandlerFactory.getPageHandler(searchTerm);

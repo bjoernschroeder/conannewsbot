@@ -2,6 +2,7 @@ package de.karasuma.discordbot.conannews;
 
 import de.karasuma.discordbot.commandhandling.CommandHandler;
 import de.karasuma.discordbot.commandhandling.CommandListener;
+import de.karasuma.discordbot.conannews.botcommands.CommandWiki;
 import de.karasuma.discordbot.conannews.consolecommand.*;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
