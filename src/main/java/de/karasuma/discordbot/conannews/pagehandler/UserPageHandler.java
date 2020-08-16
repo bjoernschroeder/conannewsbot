@@ -4,6 +4,7 @@ import com.cedarsoftware.util.StringUtilities;
 import de.karasuma.discordbot.conannews.CoolDownHandler;
 import de.karasuma.discordbot.conannews.WikiArticleChecker;
 import de.karasuma.discordbot.conannews.util.DateUtil;
+import de.karasuma.discordbot.conannews.util.HTTPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -73,7 +74,7 @@ public class UserPageHandler extends PageHandler {
                     "&" + USPROPS +
                     "&" + FORMAT + "json");
 
-            JSONObject response = getRequest(url);
+            JSONObject response = new HTTPUtil().getRequest(url);
             JSONObject userInfoJSONObject = response
                     .getJSONObject("query")
                     .getJSONArray("users")
@@ -121,7 +122,7 @@ public class UserPageHandler extends PageHandler {
             e.printStackTrace();
         }
 
-        JSONObject request = getRequest(url);
+        JSONObject request = new HTTPUtil().getRequest(url);
         System.out.println(request);
         if (request.getJSONObject("query").getJSONObject("searchinfo").getInt("totalhits") == 0) {
             return "";

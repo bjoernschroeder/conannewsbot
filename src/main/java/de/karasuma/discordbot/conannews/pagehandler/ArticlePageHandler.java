@@ -3,6 +3,7 @@ package de.karasuma.discordbot.conannews.pagehandler;
 import com.cedarsoftware.util.StringUtilities;
 import de.karasuma.discordbot.conannews.CoolDownHandler;
 import de.karasuma.discordbot.conannews.WikiArticleChecker;
+import de.karasuma.discordbot.conannews.util.HTTPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -94,7 +95,7 @@ public class ArticlePageHandler extends PageHandler {
                     "&" + PROP_REVISIONS +
                     "&" + FORMAT + "json");
 
-            JSONObject request = getRequest(url);
+            JSONObject request = new HTTPUtil().getRequest(url);
             System.out.println(request);
             if (request.getJSONObject("query").getJSONObject("searchinfo").getInt("totalhits") == 0) {
                 return metaInfo;
@@ -152,7 +153,7 @@ public class ArticlePageHandler extends PageHandler {
                     "&" + TITLES + title.replace(" ", "%20") +
                     "&" + FORMAT + "json");
 
-            JSONObject request = getRequest(url);
+            JSONObject request = new HTTPUtil().getRequest(url);
             JSONArray revisions = request
                     .getJSONObject("query")
                     .getJSONObject("pages")
