@@ -33,12 +33,12 @@ public class WikiBot extends DiscordBot{
     }
 
     private void addCommands() {
-        CommandHandler.commands.put("wiki", new CommandWiki(this));
-        CommandHandler.commands.put("Wiki", new CommandWiki(this));
-        CommandHandler.commands.put("WIKI", new CommandWiki(this));
-        CommandHandler.commands.put("Cw", new CommandWiki(this));
-        CommandHandler.commands.put("cw", new CommandWiki(this));
-        CommandHandler.commands.put("CW", new CommandWiki(this));
+        CommandHandler.commands.put("wiki", new CommandWiki());
+        CommandHandler.commands.put("Wiki", new CommandWiki());
+        CommandHandler.commands.put("WIKI", new CommandWiki());
+        CommandHandler.commands.put("Cw", new CommandWiki());
+        CommandHandler.commands.put("cw", new CommandWiki());
+        CommandHandler.commands.put("CW", new CommandWiki());
     }
 
     public boolean isCooldown() {
@@ -50,7 +50,7 @@ public class WikiBot extends DiscordBot{
     }
 
     private void setupConsoleCommands() {
-        setConsoleCommands(new HashMap<String, ConsoleCommand>());
+        setConsoleCommands(new HashMap<>());
         getConsoleCommands().put("wiki_stop", new ConsoleCommandStop(this));
         getConsoleCommands().put("wiki_start", new ConsoleCommandStart(this));
         getConsoleCommands().put("wiki_update_gamename", new ConsoleCommandUpdateActivityTitle(this));

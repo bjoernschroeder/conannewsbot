@@ -2,6 +2,7 @@ package de.karasuma.discordbot.conannews;
 
 import de.karasuma.discordbot.conannews.consolecommand.ConsoleCommandListenerRunnable;
 import de.karasuma.discordbot.conannews.mode.Mode;
+import de.karasuma.discordbot.conannews.mode.ProdutionMode;
 import de.karasuma.discordbot.conannews.mode.TestMode;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 public class Main {
 
     private FileReadAndWriter fileReadAndWriter;
-    private HashMap<String, DiscordBot> bots = new HashMap<String, DiscordBot>();
+    private HashMap<String, DiscordBot> bots = new HashMap<>();
     private boolean running;
 
     private Mode mode;
