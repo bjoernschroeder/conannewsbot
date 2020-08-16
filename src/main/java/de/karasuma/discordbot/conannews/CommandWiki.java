@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class CommandWiki implements Command {
 
     private final CoolDownHandler coolDownHandler = new CoolDownHandler();
-    private final String conanWikiBaseURL = "https://conanwiki.org/wiki/";
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
