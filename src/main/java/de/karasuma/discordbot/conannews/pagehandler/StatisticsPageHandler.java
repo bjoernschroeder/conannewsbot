@@ -37,7 +37,7 @@ public class StatisticsPageHandler extends PageHandler {
                 .addField("Benutzer / Aktiv", decimalFormat.format(stats.getInt("users")) + " / " +
                         decimalFormat.format(stats.getInt("activeusers")), true)
                 .setDescription(STATS_WIKI_LINK)
-                .setAuthor("Statistiken", STATS_WIKI_LINK, "https://conanwiki.org/favicon.png")
+                .setAuthor("Statistik", STATS_WIKI_LINK, "https://conanwiki.org/favicon.png")
                 .setColor(Color.decode(SUCCESS_SEARCH_COLOR));
     }
 
