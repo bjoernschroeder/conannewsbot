@@ -23,10 +23,6 @@ public class CommandWiki implements Command {
         String searchTerm = parseSearchTerm(args);
         System.out.println(searchTerm);
 
-        if (searchTerm.toLowerCase().equals("stats") || searchTerm.toLowerCase().equals("statistics")) {
-            new StatisticsCommand();
-        }
-
         PageHandlerFactory pageHandlerFactory = new PageHandlerFactory();
         PageHandler pageHandler = pageHandlerFactory.getPageHandler(searchTerm);
         pageHandler.handlePage(event, searchTerm, coolDownHandler);
