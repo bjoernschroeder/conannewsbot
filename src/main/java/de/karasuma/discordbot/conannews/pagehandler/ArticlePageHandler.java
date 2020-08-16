@@ -3,6 +3,7 @@ package de.karasuma.discordbot.conannews.pagehandler;
 import com.cedarsoftware.util.StringUtilities;
 import de.karasuma.discordbot.conannews.CoolDownHandler;
 import de.karasuma.discordbot.conannews.WikiArticleChecker;
+import de.karasuma.discordbot.conannews.util.DecimalFormatUtil;
 import de.karasuma.discordbot.conannews.util.HTTPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -56,10 +57,7 @@ public class ArticlePageHandler extends PageHandler {
     }
 
     private EmbedBuilder generateMessage(Map<String, String> metaInfo) {
-        DecimalFormat decimalFormat = new DecimalFormat();
-        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMAN);
-
-        decimalFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        DecimalFormat decimalFormat = new DecimalFormatUtil().getDecimalFormatter();
         return new EmbedBuilder()
                 .addField("Seitenlänge in Bytes", decimalFormat.format(Integer.valueOf(metaInfo.get("size"))), true)
                 .addField("Anzahl Wörter", decimalFormat.format(Integer.valueOf(metaInfo.get("wordcount"))), true)
