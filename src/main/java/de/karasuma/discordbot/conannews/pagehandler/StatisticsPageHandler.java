@@ -1,6 +1,7 @@
 package de.karasuma.discordbot.conannews.pagehandler;
 
 import de.karasuma.discordbot.conannews.CoolDownHandler;
+import de.karasuma.discordbot.conannews.util.DecimalFormatUtil;
 import de.karasuma.discordbot.conannews.util.HTTPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 public class StatisticsPageHandler extends PageHandler {
 
@@ -19,11 +21,24 @@ public class StatisticsPageHandler extends PageHandler {
     @Override
     public void handlePage(MessageReceivedEvent event, String searchTerm, CoolDownHandler coolDownHandler) {
         JSONObject stats = getStats();
-        generateStatsMessage(stats);
+        EmbedBuilder statsMessage = generateStatsMessage(stats);
+        sendMessage(event, statsMessage, coolDownHandler);
     }
 
-    private void generateStatsMessage(JSONObject stats) {
-
+    private EmbedBuilder generateStatsMessage(JSONObject stats) {
+        DecimalFormat decimalFormat = new DecimalFormatUtil().getDecimalFormatter();
+        return new EmbedBuilder()
+                .addField("Seiten / Artikel",
+                        decimalFormat.format(stats.getInt("pages")) + " / " +
+                                decimalFormat.format(stats.getInt("articles")),
+                        true)
+                .addField("Bearbeitungen", decimalFormat.format(stats.getInt("edits")), true)
+                .addField("Bilder", decimalFormat.format(stats.getInt("images")), true)
+                .addField("Benutzer / Aktiv", decimalFormat.format(stats.getInt("users")) + " / " +
+                        decimalFormat.format(stats.getInt("activeusers")), true)
+                .setDescription(STATS_WIKI_LINK)
+                .setAuthor("Statistiken", STATS_WIKI_LINK, "https://conanwiki.org/favicon.png")
+                .setColor(Color.decode(SUCCESS_SEARCH_COLOR));
     }
 
     private JSONObject getStats() {
