@@ -94,9 +94,8 @@ public class UserPageHandler extends PageHandler {
             String registerTime = dateUtil.getTimeFromIso(registrationInfo);
 
             EmbedBuilder embedBuilder = new EmbedBuilder()
-                    .addField("Nutzername", userInfoJSONObject.getString("name"), true)
-                    .addField("Edits", decimalFormat.format(userInfoJSONObject.getInt("editcount")), true)
-                    .addField("Registrierungsdatum", registerDate + ", " + registerTime + " Uhr", true)
+                    .addField("Anzahl der Bearbeitungen", decimalFormat.format(userInfoJSONObject.getInt("editcount")), true)
+                    .addField("Anmeldezeitpunkt", registerDate + ", " + registerTime + " Uhr", true)
                     .setDescription(conanWikiBaseURL + "Benutzer:" + userInfoJSONObject.getString("name"))
                     .setAuthor("Benutzer:" + userInfoJSONObject.getString("name"),
                             conanWikiBaseURL + "Benutzer:" + userInfoJSONObject.getString("name"),
