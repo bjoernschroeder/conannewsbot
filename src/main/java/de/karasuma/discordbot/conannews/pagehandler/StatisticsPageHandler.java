@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -18,6 +19,11 @@ public class StatisticsPageHandler extends PageHandler {
     @Override
     public void handlePage(MessageReceivedEvent event, String searchTerm, CoolDownHandler coolDownHandler) {
         JSONObject stats = getStats();
+        generateStatsMessage(stats);
+    }
+
+    private void generateStatsMessage(JSONObject stats) {
+
     }
 
     private JSONObject getStats() {
