@@ -59,7 +59,7 @@ public class SpecialPageHandler extends PageHandler {
                                  JSONObject diffInfo) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.decode(SPECIAL_SITE_COLOR))
-                .setAuthor(diffInfo.getString("title"),
+                .setAuthor("Unterschied: " + diffInfo.getString("title"),
                         url,
                         "https://conanwiki.org/favicon.png")
                 .setDescription(url.replace(" ", "_"));
