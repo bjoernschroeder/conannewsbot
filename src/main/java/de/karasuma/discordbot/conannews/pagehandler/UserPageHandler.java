@@ -126,6 +126,8 @@ public class UserPageHandler extends PageHandler {
                             ", " + dateUtil.getTimeFromIso(revision.getString("timestamp")) +
                             " Uhr");
                 }
+            } else {
+                embedBuilder.setFooter("Keine Benutzerseite für " + userInfoJSONObject.getString("name"));
             }
             sendMessage(event, embedBuilder, coolDownHandler);
 
