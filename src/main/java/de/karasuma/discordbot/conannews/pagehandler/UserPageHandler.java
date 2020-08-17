@@ -57,15 +57,18 @@ public class UserPageHandler extends PageHandler {
             e.printStackTrace();
         }
 
-        String searchedTitle = searchForPageTitle(title);
-        if (!searchedTitle.isEmpty()) {
-            title = searchedTitle;
+        //String searchedTitle = searchForPage(title);
+        JSONObject userPageInfo = searchForPage(title);
+        if (userPageInfo.isEmpty()) {
+            userPageInfo.put("title", title);
+            //title = searchedTitle;
         }
-        sendUserMessage(title, event, coolDownHandler);
+        sendUserMessage(userPageInfo, event, coolDownHandler);
     }
 
-    private void sendUserMessage(String title, MessageReceivedEvent event, CoolDownHandler coolDownHandler) {
-        String username = title.replace("Benutzer:", "");
+    private void sendUserMessage(JSONObject userPageInfo, MessageReceivedEvent event, CoolDownHandler coolDownHandler) {
+        System.out.println(userPageInfo);
+        String username = userPageInfo.getString("title").replace("Benutzer:", "");
         try {
             URL url = new URL(CONANWIKI_API_BASE_URL +
                     "?" + ACTION_QUERY +
@@ -102,6 +105,28 @@ public class UserPageHandler extends PageHandler {
                             conanWikiBaseURL + "Benutzer:" + userInfoJSONObject.getString("name"),
                             "https://conanwiki.org/favicon.png")
                     .setColor(Color.decode(SUCCESS_USER_SEARCH_COLOR));
+
+            if (!userPageInfo.isNull("timestamp")) {
+                URL pageSearchUrl = new URL(CONANWIKI_API_BASE_URL +
+                        "?" + ACTION_QUERY +
+                        "&" + PROP_REVISIONS +
+                        "&" + TITLES + userPageInfo.getString("title").replace(" ", "%20") +
+                        "&" + FORMAT + "json");
+
+                JSONObject request = new HTTPUtil().getRequest(pageSearchUrl);
+                JSONArray revisions = request
+                        .getJSONObject("query")
+                        .getJSONObject("pages")
+                        .getJSONObject(String.valueOf(userPageInfo.getInt("pageid")))
+                        .getJSONArray("revisions");
+                if (!revisions.isEmpty()) {
+                    JSONObject revision = revisions.getJSONObject(0);
+                    embedBuilder.setFooter("Letzte Änderung von " + revision.getString("user") +
+                            " am " + dateUtil.getDateFromIso(revision.getString("timestamp")) +
+                            ", " + dateUtil.getTimeFromIso(revision.getString("timestamp")) +
+                            " Uhr");
+                }
+            }
             sendMessage(event, embedBuilder, coolDownHandler);
 
         } catch (MalformedURLException e) {
@@ -109,7 +134,7 @@ public class UserPageHandler extends PageHandler {
         }
     }
 
-    String searchForPageTitle(String title) {
+    JSONObject searchForPage(String title) {
         URL url = null;
         try {
             url = new URL(CONANWIKI_API_BASE_URL +
@@ -121,11 +146,11 @@ public class UserPageHandler extends PageHandler {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
+        System.out.println(url);
         JSONObject request = new HTTPUtil().getRequest(url);
         System.out.println(request);
         if (request.getJSONObject("query").getJSONObject("searchinfo").getInt("totalhits") == 0) {
-            return "";
+            return new JSONObject();
         }
 
         JSONObject result = null;
@@ -154,6 +179,6 @@ public class UserPageHandler extends PageHandler {
                 result = resultJSONObject;
             }
         }
-        return result.getString("title");
+        return result;
     }
 }
