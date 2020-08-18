@@ -25,7 +25,7 @@ public class CommandWiki implements Command {
 
         PageHandlerFactory pageHandlerFactory = new PageHandlerFactory();
         PageHandler pageHandler = pageHandlerFactory.getPageHandler(searchTerm);
-        pageHandler.handlePage(event, searchTerm, coolDownHandler);
+        pageHandler.handlePage(event, searchTerm.toLowerCase(), coolDownHandler);
     }
 
     private String parseSearchTerm(String[] args) {
