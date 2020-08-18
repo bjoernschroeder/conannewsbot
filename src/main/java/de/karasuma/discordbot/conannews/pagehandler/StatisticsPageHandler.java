@@ -39,7 +39,7 @@ public class StatisticsPageHandler extends PageHandler {
                         true)
                 .addField("Bearbeitungen", decimalFormat.format(stats.getInt("edits")), true)
                 .addField("Dateien", decimalFormat.format(stats.getInt("images")), true)
-                .addField("Benutzer / Aktiv", decimalFormat.format(stats.getInt("users")) + " / " +
+                .addField("Registrierte Benutzer / Aktiv", decimalFormat.format(stats.getInt("users")) + " / " +
                         decimalFormat.format(stats.getInt("activeusers")), true)
                 .addField("Gründungsdatum", dateUtil.getDateFromIso(stats.getString("originDateTimestamp"))
                         + ", " + dateUtil.getTimeFromIso(stats.getString("originDateTimestamp")) + " Uhr", true)
