@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 
 public class StatisticsPageHandler extends PageHandler {
 
+    private final String STATISTICS_SITE_COLOR = "#F1C40F";
     private final String STATS_REQUEST_URL =
             "https://conanwiki.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json";
     private final String STATS_WIKI_LINK = "https://conanwiki.org/wiki/Spezial:Statistik";
@@ -46,7 +47,7 @@ public class StatisticsPageHandler extends PageHandler {
                         + ", " + dateUtil.getTimeFromIso(stats.getString("originDateTimestamp")) + " Uhr", true)
                 .setDescription(STATS_WIKI_LINK)
                 .setAuthor("Statistik", STATS_WIKI_LINK, "https://conanwiki.org/favicon.png")
-                .setColor(Color.decode(SUCCESS_SEARCH_COLOR));
+                .setColor(Color.decode(STATISTICS_SITE_COLOR));
     }
 
     private JSONObject getStats() {
