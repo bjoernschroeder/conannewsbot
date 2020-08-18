@@ -37,7 +37,6 @@ public class FileReadAndWriter {
         return obj;
     }
 
-    @SuppressWarnings("unchecked")
     protected void createJSONFile (Activity.ActivityType activityType, String activityTitle) {
         JSONObject obj = new JSONObject();
         obj.put("name", activityTitle);
