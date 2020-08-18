@@ -33,7 +33,7 @@ public class StatisticsPageHandler extends PageHandler {
                                 decimalFormat.format(stats.getInt("articles")),
                         true)
                 .addField("Bearbeitungen", decimalFormat.format(stats.getInt("edits")), true)
-                .addField("Bilder", decimalFormat.format(stats.getInt("images")), true)
+                .addField("Dateien", decimalFormat.format(stats.getInt("images")), true)
                 .addField("Benutzer / Aktiv", decimalFormat.format(stats.getInt("users")) + " / " +
                         decimalFormat.format(stats.getInt("activeusers")), true)
                 .setDescription(STATS_WIKI_LINK)
