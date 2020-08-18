@@ -46,7 +46,7 @@ public class StatisticsPageHandler extends PageHandler {
                 .addField("Gründungsdatum", dateUtil.getDateFromIso(stats.getString("originDateTimestamp"))
                         + ", " + dateUtil.getTimeFromIso(stats.getString("originDateTimestamp")) + " Uhr", true)
                 .setDescription(STATS_WIKI_LINK)
-                .setAuthor("Spazial:Statistik", STATS_WIKI_LINK, "https://conanwiki.org/favicon.png")
+                .setAuthor("Spezial:Statistik", STATS_WIKI_LINK, "https://conanwiki.org/favicon.png")
                 .setColor(Color.decode(STATISTICS_SITE_COLOR));
     }
 
