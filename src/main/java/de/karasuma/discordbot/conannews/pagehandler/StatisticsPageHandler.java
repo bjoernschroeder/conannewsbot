@@ -33,12 +33,12 @@ public class StatisticsPageHandler extends PageHandler {
         DecimalFormat decimalFormat = new DecimalFormatUtil().getDecimalFormatter();
         DateUtil dateUtil = new DateUtil();
         return new EmbedBuilder()
-                .addField("Seiten / Artikel",
-                        decimalFormat.format(stats.getInt("pages")) + " / " +
-                                decimalFormat.format(stats.getInt("articles")),
+                .addField("Artikel / Seiten",
+                        decimalFormat.format(stats.getInt("articles")) + " / " +
+                                        decimalFormat.format(stats.getInt("pages")),
                         true)
-                .addField("Bearbeitungen", decimalFormat.format(stats.getInt("edits")), true)
                 .addField("Dateien", decimalFormat.format(stats.getInt("images")), true)
+                .addField("Bearbeitungen", decimalFormat.format(stats.getInt("edits")), true)
                 .addField("Registrierte Benutzer",
                          decimalFormat.format(stats.getInt("activeusers")) + " von " +
                                  decimalFormat.format(stats.getInt("users")) + " aktiv", true)
