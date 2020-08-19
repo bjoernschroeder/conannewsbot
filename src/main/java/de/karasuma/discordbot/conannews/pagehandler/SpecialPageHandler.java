@@ -1,6 +1,7 @@
 package de.karasuma.discordbot.conannews.pagehandler;
 
 import de.karasuma.discordbot.conannews.CoolDownHandler;
+import de.karasuma.discordbot.conannews.util.DecimalFormatUtil;
 import de.karasuma.discordbot.conannews.util.HTTPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -14,10 +15,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 
 public class SpecialPageHandler extends PageHandler {
 
+    private final String ACTIVE_USER_URL = "https://conanwiki.org/wiki/Spezial:Aktive_Benutzer";
     private final String diffBaseUrl = "https://conanwiki.org/index.php?diff=";
     private final String SPECIAL_SITE_COLOR = "#F1C40F";
     private static final String REVIDS = "revids=";
@@ -45,6 +48,13 @@ public class SpecialPageHandler extends PageHandler {
                 JSONObject diffInfo = getDiffInfo(redirectedUrl);
                 assert !diffInfo.isEmpty();
                 sendDiffMessage(event, redirectedUrl, coolDownHandler, diffInfo);
+            } else if (redirectedUrl.equals(ACTIVE_USER_URL)) {
+                URL statsRequestUrl = new URL(STATS_REQUEST_URL);
+                HTTPUtil httpUtil = new HTTPUtil();
+                JSONObject stats = httpUtil.getRequest(statsRequestUrl)
+                        .getJSONObject("query")
+                        .getJSONObject("statistics");
+                sendActiveUsersMessage(event, stats, coolDownHandler);
             } else {
                 String decodedPath = URLDecoder.decode(redirectedUrl, StandardCharsets.UTF_8.name());
                 System.out.println(decodedPath);
@@ -53,6 +63,21 @@ public class SpecialPageHandler extends PageHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendActiveUsersMessage(MessageReceivedEvent event, JSONObject stats, CoolDownHandler coolDownHandler) {
+        DecimalFormatUtil decimalFormatUtil = new DecimalFormatUtil();
+        DecimalFormat decimalFormatter = decimalFormatUtil.getDecimalFormatter();
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setColor(Color.decode(SPECIAL_SITE_COLOR))
+                .setAuthor("Spezial:Aktive Benutzer",
+                        ACTIVE_USER_URL,
+                        "https://conanwiki.org/favicon.png")
+                .setDescription(ACTIVE_USER_URL)
+                .setFooter("Aktive Benutzer: " +
+                        decimalFormatter.format(stats.getInt("activeusers")) +
+                        " von " + decimalFormatter.format(stats.getInt("users")));
+        sendMessage(event, embedBuilder, coolDownHandler);
     }
 
     private void sendDiffMessage(MessageReceivedEvent event, String url, CoolDownHandler coolDownHandler,

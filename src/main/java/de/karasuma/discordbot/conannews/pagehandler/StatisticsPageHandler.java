@@ -16,8 +16,6 @@ import java.text.DecimalFormat;
 public class StatisticsPageHandler extends PageHandler {
 
     private final String STATISTICS_SITE_COLOR = "#F1C40F";
-    private final String STATS_REQUEST_URL =
-            "https://conanwiki.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json";
     private final String STATS_WIKI_LINK = "https://conanwiki.org/wiki/Spezial:Statistik";
     private final String FIRST_EDIT_REQUEST_URL =
             "https://conanwiki.org/api.php?action=query" +

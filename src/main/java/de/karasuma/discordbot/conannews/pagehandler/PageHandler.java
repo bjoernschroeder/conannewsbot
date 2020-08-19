@@ -9,6 +9,8 @@ public abstract class PageHandler {
 
     final String conanWikiBaseURL = "https://conanwiki.org/wiki/";
     final String conanWikiUrl = "https://conanwiki.org/";
+    final String STATS_REQUEST_URL =
+            "https://conanwiki.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json";
 
     final String CONANWIKI_API_BASE_URL = "https://conanwiki.org/api.php";
     final String URL_SPACE_SYMBOL = "_";
