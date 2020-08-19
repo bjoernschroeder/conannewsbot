@@ -3,6 +3,7 @@ package de.karasuma.discordbot.conannews.pagehandler;
 import de.karasuma.discordbot.conannews.CoolDownHandler;
 import de.karasuma.discordbot.conannews.util.DecimalFormatUtil;
 import de.karasuma.discordbot.conannews.util.HTTPUtil;
+import de.karasuma.discordbot.conannews.util.NoSearchResultMessageCreator;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
@@ -46,7 +47,10 @@ public class SpecialPageHandler extends PageHandler {
 
             if (isDiff(redirectedUrl)) {
                 JSONObject diffInfo = getDiffInfo(redirectedUrl);
-                assert !diffInfo.isEmpty();
+                if (diffInfo.isEmpty()) {
+                    sendDiffMessageError(event, coolDownHandler);
+                    return;
+                }
                 sendDiffMessage(event, redirectedUrl, coolDownHandler, diffInfo);
             } else if (redirectedUrl.equals(ACTIVE_USER_URL)) {
                 URL statsRequestUrl = new URL(STATS_REQUEST_URL);
@@ -63,6 +67,12 @@ public class SpecialPageHandler extends PageHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendDiffMessageError(MessageReceivedEvent event, CoolDownHandler coolDownHandler) {
+        NoSearchResultMessageCreator noSearchResultMessageCreator = new NoSearchResultMessageCreator();
+        EmbedBuilder noSearchResultMessage = noSearchResultMessageCreator.generateNoSearchResultMessage();
+        sendMessage(event, noSearchResultMessage, coolDownHandler);
     }
 
     private void sendActiveUsersMessage(MessageReceivedEvent event, JSONObject stats, CoolDownHandler coolDownHandler) {
@@ -102,8 +112,11 @@ public class SpecialPageHandler extends PageHandler {
                     "&" + FORMAT + "json"
             );
             JSONObject response = new HTTPUtil().getRequest(url);
-            JSONObject pages = response.getJSONObject("query")
-                    .getJSONObject("pages");
+            JSONObject query = response.getJSONObject("query");
+            if (query.has("badrevids")) {
+                return new JSONObject();
+            }
+            JSONObject pages = query.getJSONObject("pages");
 
             Iterator<String> keys = pages.keys();
             if (keys.hasNext()) {
