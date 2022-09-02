@@ -1,6 +1,6 @@
 # Project exclude paths
-/target/
-/.idea/
+target/
+.idea/
 message.json
 info.json
 Token.java
