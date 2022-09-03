@@ -12,11 +12,7 @@ public class DateUtil {
         OffsetDateTime offsetDateTime = OffsetDateTime.parse(isoTimeStamp);
         LocalDateTime localDateTime = offsetDateTime.atZoneSameInstant(ZoneId.of("Europe/Berlin")).toLocalDateTime();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d. MMM YYYY").withLocale(Locale.GERMAN);
-
-        return localDateTime.format(dateFormat)
-                .replace("März", "Mär.")
-                .replace("Juni", "Jun.")
-                .replace("Juli", "Jul.");
+        return localDateTime.format(dateFormat).replace("März", "Mär.").replace("Juni", "Jun.").replace("Juli", "Jul.");
     }
 
     public String getTimeFromIso(String isoTimeStamp) {

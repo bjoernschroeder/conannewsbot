@@ -48,7 +48,6 @@ public class FileReadAndWriter {
         }
 
         long index = activityTypes.indexOf(activityType);
-
         obj.put("typeIndex", index);
 
         try {
@@ -92,11 +91,9 @@ public class FileReadAndWriter {
 
                 }
 
-                main.getBots().get("welcome").setActivityTitle(gameName);
-                main.getBots().get("welcome").setActivityType(activityType);
-
+                main.getWelcomeBot().setActivityTitle(gameName);
+                main.getWikiBot().setActivityType(activityType);
                 readableFile = true;
-
             } else {
                 readableFile = false;
             }

@@ -9,7 +9,7 @@ public abstract class PageHandler {
 
     final String conanWikiBaseURL = "https://conanwiki.org/wiki/";
     final String conanWikiUrl = "https://conanwiki.org/";
-
+    final String STATS_REQUEST_URL = "https://conanwiki.org/api.php?action=query&meta=siteinfo&siprop=statistics&format=json";
     final String CONANWIKI_API_BASE_URL = "https://conanwiki.org/api.php";
     final String URL_SPACE_SYMBOL = "_";
     final String SUCCESS_SEARCH_COLOR = "#36a1e8";
@@ -24,7 +24,7 @@ public abstract class PageHandler {
     public abstract void handlePage(MessageReceivedEvent event, String searchTerm, CoolDownHandler coolDownHandler);
 
     void sendMessage(MessageReceivedEvent event, EmbedBuilder embedBuilder, CoolDownHandler coolDownHandler) {
-        event.getChannel().sendMessage(embedBuilder.build()).queue();
+        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         coolDownHandler.setOnCoolDown();
     }
 
