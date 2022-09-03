@@ -10,11 +10,11 @@ public class ConsoleCommandExit implements ConsoleCommand {
         this.consoleCommandListener = consoleCommandListener;
     }
 
+    //TODO: rewrite, dont return log string
     @Override
     public String execute(String input) {
-        for (DiscordBot bot : consoleCommandListener.getMain().getBots().values()) {
-            bot.shutDownBot();
-        }
+        consoleCommandListener.getMain().getWikiBot().shutDownBot();
+        consoleCommandListener.getMain().getWelcomeBot().shutDownBot();
 
         System.out.println("All Bots OFFLINE");
         consoleCommandListener.getMain().setRunning(false);

@@ -1,6 +1,8 @@
 package de.karasuma.discordbot.conannews.consolecommand;
 
 import de.karasuma.discordbot.conannews.DiscordBot;
+import de.karasuma.discordbot.conannews.WelcomeBot;
+import de.karasuma.discordbot.conannews.WikiBot;
 
 public class ConsoleCommandStatus implements ConsoleCommand {
 
@@ -13,9 +15,10 @@ public class ConsoleCommandStatus implements ConsoleCommand {
     @Override
     public String execute(String input) {
         String message = "";
-        for (DiscordBot bot : consoleCommandListener.getMain().getBots().values()) {
-            message += bot.toString() + ": " + bot.getJDA().getStatus() + "\n";
-        }
+        WelcomeBot welcomeBot = consoleCommandListener.getMain().getWelcomeBot();
+        WikiBot wikiBot = consoleCommandListener.getMain().getWikiBot();
+        message += welcomeBot.toString() + ": " + welcomeBot.getJDA().getStatus() + "\n";
+        message += wikiBot.toString() + ": " + wikiBot.getJDA().getStatus() + "\n";
         return message;
     }
 

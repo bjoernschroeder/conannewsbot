@@ -19,10 +19,11 @@ public class ConsoleCommandListenerRunnable implements Runnable {
     @Override
     public void run() {
         commands = new HashMap<>();
-        for (DiscordBot bot : getMain().getBots().values()) {
-            if (bot.getConsoleCommands() != null) {
-                commands.putAll(bot.getConsoleCommands());
-            }
+        if (main.getWelcomeBot().getConsoleCommands() != null) {
+            commands.putAll(main.getWelcomeBot().getConsoleCommands());
+        }
+        if (main.getWikiBot().getConsoleCommands() != null) {
+            commands.putAll(main.getWikiBot().getConsoleCommands());
         }
         commands.put("help", new ConsoleCommandHelp(this));
         commands.put("status", new ConsoleCommandStatus(this));

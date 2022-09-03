@@ -7,6 +7,7 @@ import de.karasuma.discordbot.conannews.consolecommand.*;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.util.HashMap;
 
@@ -20,9 +21,11 @@ public class WikiBot extends DiscordBot{
     }
 
     @Override
-    public void init() {
-        setBuilder(new JDABuilder(AccountType.BOT));
-        getBuilder().setToken(getMain().getMode().getWikiToken());
+    public void init(String token) {
+        JDABuilder jdaBuilder = JDABuilder.createDefault(token);
+        jdaBuilder.enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT);
+        this.setBuilder(jdaBuilder);
+        getBuilder().setToken(token);
         getBuilder().setAutoReconnect(true);
         getBuilder().addEventListeners(new CommandListener());
 

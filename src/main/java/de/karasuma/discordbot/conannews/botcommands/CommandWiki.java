@@ -21,18 +21,18 @@ public class CommandWiki implements Command {
         }
 
         String searchTerm = parseSearchTerm(args);
+        //TODO: replace with debug log
         System.out.println(searchTerm);
 
         PageHandlerFactory pageHandlerFactory = new PageHandlerFactory();
         PageHandler pageHandler = pageHandlerFactory.getPageHandler(searchTerm);
-        pageHandler.handlePage(event, searchTerm, coolDownHandler);
+        pageHandler.handlePage(event, searchTerm.toLowerCase(), coolDownHandler);
     }
 
     private String parseSearchTerm(String[] args) {
         StringBuilder searchTerm = new StringBuilder(args[0]);
         for (int i = 1; i < args.length; i++) {
-            searchTerm.append(" ")
-                    .append(args[i].trim());
+            searchTerm.append(" ").append(args[i].trim());
         }
         return searchTerm.toString();
     }

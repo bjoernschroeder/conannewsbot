@@ -5,6 +5,7 @@ import de.karasuma.discordbot.conannews.consolecommand.*;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.util.HashMap;
 
@@ -15,15 +16,18 @@ public class WelcomeBot extends DiscordBot {
     }
 
     @Override
-    public void init() {
-        setBuilder(new JDABuilder(AccountType.BOT));
-        getBuilder().setToken(getMain().getMode().getWelcomeToken());
+    public void init(String token) {
+        JDABuilder jdaBuilder = JDABuilder.createDefault(token);
+        jdaBuilder.enableIntents(GatewayIntent.GUILD_MEMBERS, new GatewayIntent[]{GatewayIntent.GUILD_MESSAGES});
+        setBuilder(jdaBuilder);
+        getBuilder().setToken(token);
         getBuilder().setAutoReconnect(true);
         getBuilder().addEventListeners(new UserJoinedListener());
 
         getMain().getFileReaderAndWriter().initGameStatusFromFile();
 
         if (!getMain().getFileReaderAndWriter().isReadableFile()) {
+            //TODO: replace with logs
             System.out.println("Error reading file: Creating new file...");
             getBuilder().setActivity(Activity.of(DEFAULT_ACTIVITY_TYPE, DEFAULT_ACTIVITY_TITLE));
             getMain().getFileReaderAndWriter().createJSONFile(DEFAULT_ACTIVITY_TYPE, DEFAULT_ACTIVITY_TITLE);

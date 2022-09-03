@@ -15,7 +15,7 @@ public abstract class DiscordBot {
     private JDABuilder builder;
     private JDA jda;
 
-    protected final Activity.ActivityType DEFAULT_ACTIVITY_TYPE = Activity.ActivityType.DEFAULT;
+    protected final Activity.ActivityType DEFAULT_ACTIVITY_TYPE = Activity.ActivityType.PLAYING;
     protected final String DEFAULT_ACTIVITY_TITLE = "Empfangskomitee";
 
     private Activity.ActivityType activityType = DEFAULT_ACTIVITY_TYPE;
@@ -28,9 +28,10 @@ public abstract class DiscordBot {
         this.name = name;
     }
 
-    public abstract void init();
+    public abstract void init(String token);
 
 
+    //TODO rewrite shutdown process, dont return string logs
     public String shutDownBot() {
         if (jda != null && jda.getStatus() == JDA.Status.SHUTDOWN) {
             return "Bot is already OFFLINE";
@@ -45,15 +46,11 @@ public abstract class DiscordBot {
     }
 
     private boolean allBotsOffline() {
-        boolean allOffline = true;
-        for (DiscordBot bot : getMain().getBots().values()) {
-            if (bot.getJDA().getStatus() != JDA.Status.SHUTDOWN) {
-                allOffline = false;
-            }
-        }
-        return allOffline;
+        //TODO: create isShutDown method for bots
+        return main.getWelcomeBot().getJDA().getStatus() == JDA.Status.SHUTDOWN && main.getWikiBot().getJDA().getStatus() == JDA.Status.SHUTDOWN;
     }
 
+    //TODO: rewrite, dont return string logs
     public String startBot() {
         if (jda != null && jda.getStatus() == JDA.Status.CONNECTED) {
             return "Bot is already ONLINE";
@@ -67,6 +64,10 @@ public abstract class DiscordBot {
         return "Bot has been successfully started";
     }
 
+    //TODO: rewrite updating activity:
+    //      - pass activity to updateActivity
+    //      - receive activity via console
+    //      - updateActivity stores new activity in file
     private void updateActivity() {
         if(getBuilder() != null && activityType != null && activityTitle != null) {
             if (jda != null) {
@@ -80,6 +81,8 @@ public abstract class DiscordBot {
     public HashMap<String, ConsoleCommand> getConsoleCommands() {
         return consoleCommands;
     }
+
+    //TODO: Remove setters for activityTitle
     public void setActivityTitle(String input) {
         activityTitle = input;
         updateActivity();

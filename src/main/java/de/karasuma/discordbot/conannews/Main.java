@@ -1,41 +1,42 @@
 package de.karasuma.discordbot.conannews;
 
 import de.karasuma.discordbot.conannews.consolecommand.ConsoleCommandListenerRunnable;
-import de.karasuma.discordbot.conannews.mode.Mode;
-import de.karasuma.discordbot.conannews.mode.ProdutionMode;
-import de.karasuma.discordbot.conannews.mode.TestMode;
 
 import java.util.HashMap;
 
 public class Main {
 
     private FileReadAndWriter fileReadAndWriter;
-    private HashMap<String, DiscordBot> bots = new HashMap<>();
+
+    private WelcomeBot welcomeBot;
+    private WikiBot wikiBot;
     private boolean running;
 
-    private Mode mode;
-
     public static void main(String[] args) {
+        if (args.length < 2) {
+            //TODO: Replace with logs
+            System.err.println("Application requires at least 2 tokens!");
+            return;
+        }
         Main main = new Main();
-        main.createBotAndFileReadAndWriter();
+        main.createBotAndFileReadAndWriter(args[0], args[1]);
     }
 
-    public void createBotAndFileReadAndWriter() {
-        mode = new TestMode();
-        bots.put("welcome", new WelcomeBot(this, "ConanNews-Welcome"));
-        bots.put("wiki", new WikiBot(this, "ConanWiki"));
+    public void createBotAndFileReadAndWriter(String welcomeBotToken, String wikiBotToken) {
+        welcomeBot = new WelcomeBot(this, "ConanNews-Welcome");
+        wikiBot = new WikiBot(this, "ConanWiki");
 
         fileReadAndWriter = new FileReadAndWriter(this);
 
-        for (DiscordBot bot : bots.values()) {
-            bot.init();
-        }
+        welcomeBot.init(welcomeBotToken);
+        wikiBot.init(wikiBotToken);
 
         running = true;
         Thread thread = new Thread(new ConsoleCommandListenerRunnable(this));
         thread.setDaemon(false);
         thread.start();
 
+        // TODO: Replace with logs
         System.out.println("Bots loaded successful. You can now start operating.");
     }
 
@@ -43,8 +44,12 @@ public class Main {
         return fileReadAndWriter;
     }
 
-    public HashMap<String, DiscordBot> getBots() {
-        return bots;
+    public WelcomeBot getWelcomeBot() {
+        return welcomeBot;
+    }
+
+    public WikiBot getWikiBot() {
+        return wikiBot;
     }
 
     public void setRunning(boolean value) {
@@ -53,13 +58,5 @@ public class Main {
 
     public boolean getRunning() {
         return running;
-    }
-
-    public Mode getMode() {
-        return mode;
-    }
-
-    public void setMode(Mode mode) {
-        this.mode = mode;
     }
 }

@@ -33,6 +33,7 @@ public class UserJoinedListener extends ListenerAdapter {
                     + event.getMember().getUser().getAsMention() + welcomeMessageSplit2).queue();
             createJSONWithDefaultMessage();
         }
+        //TODO replace with logs
         System.out.println("User " + event.getMember().getUser().getName() + " joined server. Message:");
         System.out.println(buildMessage(event).toString());
         super.onGuildMemberJoin(event);

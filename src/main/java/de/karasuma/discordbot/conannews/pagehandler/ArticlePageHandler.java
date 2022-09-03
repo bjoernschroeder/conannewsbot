@@ -33,10 +33,9 @@ public class ArticlePageHandler extends PageHandler {
     public void handlePage(MessageReceivedEvent event, String searchTerm, CoolDownHandler coolDownHandler) {
         WikiArticleChecker wikiArticleChecker = new WikiArticleChecker();
 
-        Document doc;
         String title = searchTerm;
         try {
-            doc = Jsoup.connect(conanWikiBaseURL + searchTerm).get();
+            Document doc = Jsoup.connect(conanWikiBaseURL + searchTerm).get();
             if (wikiArticleChecker.articleExists(doc)) {
                 Element titleElement = doc.getElementById("firstHeading");
                 title = titleElement.wholeText();
@@ -48,10 +47,25 @@ public class ArticlePageHandler extends PageHandler {
         Map<String, String> metaInfo = getMetaInfo(title);
         System.out.println(metaInfo);
 
+        String referenceTitle = "";
+
+        try {
+            Document doc = Jsoup.connect("https://conanwiki.org/wiki/" + metaInfo.get("title")).get();
+            if (wikiArticleChecker.articleExists(doc)) {
+                Element titleElement = doc.getElementById("firstHeading");
+                referenceTitle = titleElement.wholeText();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (metaInfo.isEmpty()) {
             sendNoSearchResultsMessage(event, coolDownHandler);
         } else {
-            EmbedBuilder message = generateMessage(metaInfo);
+            if (!referenceTitle.equals(metaInfo.get("title"))) {
+                metaInfo = getMetaInfo(referenceTitle);
+            }
+            EmbedBuilder message = this.generateMessage(metaInfo);
             sendMessage(event, message, coolDownHandler);
         }
     }
@@ -88,10 +102,10 @@ public class ArticlePageHandler extends PageHandler {
         try {
             URL url = new URL(CONANWIKI_API_BASE_URL +
                     "?" + ACTION_QUERY +
+                    "&" + FORMAT + "json" +
                     "&" + LIST_SEARCH +
                     "&" + SRSEARCH + title.replace(" ", "%20") +
-                    "&" + PROP_REVISIONS +
-                    "&" + FORMAT + "json");
+                    "&" + PROP_REVISIONS);
 
             JSONObject request = new HTTPUtil().getRequest(url);
             System.out.println(request);
