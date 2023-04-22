@@ -6,6 +6,7 @@ info.json
 Token.java
 *.iml
 .vscode/
+bin/
 
 .gradle
 **/build/
