@@ -58,7 +58,7 @@ public abstract class DiscordBot {
         try {
             jda = getBuilder().build();
             jda.awaitReady();
-        } catch (LoginException | InterruptedException e1) {
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
         return "Bot has been successfully started";
