@@ -5,3 +5,4 @@ message.json
 info.json
 Token.java
 *.iml
+.vscode/
