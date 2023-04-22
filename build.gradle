@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+group = 'de.karasuma'
+version = '1.0-SNAPSHOT'
+
+description = """"""
+
+sourceCompatibility = 17
+targetCompatibility = 17
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+
+repositories {  
+     maven { url "https://jcenter.bintray.com" }
+     maven { url "https://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    // https://mvnrepository.com/artifact/net.dv8tion/JDA
+    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-beta.8'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version:'1.1.1'
+    implementation group: 'org.json', name: 'json', version:'20190722'
+    implementation group: 'org.jsoup', name: 'jsoup', version:'1.15.3'
+    implementation group: 'com.cedarsoftware', name: 'java-util', version:'1.53.0'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version:'1.2.3'
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes "Main-Class": "de.karasuma.discordbot.conannews.Main"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
