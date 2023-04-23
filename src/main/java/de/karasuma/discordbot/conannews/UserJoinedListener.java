@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -14,43 +15,43 @@ import org.json.simple.parser.ParseException;
 
 public class UserJoinedListener extends ListenerAdapter {
 
-    static String welcomeMessageSplit1 = "Herzlich willkommen, ";
-    static String welcomeMessageSplit2 = " <:taeter:442749524746698752> Nimm dir einen Moment Zeit, um unsere <#448331066206322718> durchzulesen, beachte die Kanalthemen und sei gegrüßt!";
-    static String filePath = "./message.json";
-    String message = "";
-    boolean readableFile = false;
+    final String DEFAULT_WELCOME_MSG = "Herzlich willkommen, @USER <:taeter:442749524746698752> " 
+        + "Nimm dir einen Moment Zeit, um unsere <#448331066206322718> durchzulesen, beachte die Kanalthemen und sei gegrüßt!";
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        readableFile = false;
-        readFromFile();
+        String msg = buildMsg(event.getUser().getAsMention(), "./message.json");
+        event.getGuild()
+            .getTextChannelsByName("\u2615cafe_poirot", true)
+            .get(0)
+            .sendMessage(msg)
+            .queue();
 
-        if (readableFile) {
-            event.getGuild().getTextChannelsByName("\u2615cafe_poirot", true).get(0)
-                    .sendMessage(buildMessage(event)).queue();
-        } else {
-            event.getGuild().getTextChannelsByName("\u2615cafe_poirot", true).get(0).sendMessage(welcomeMessageSplit1
-                    + event.getMember().getUser().getAsMention() + welcomeMessageSplit2).queue();
-            createJSONWithDefaultMessage();
-        }
         //TODO replace with logs
         System.out.println("User " + event.getMember().getUser().getName() + " joined server. Message:");
-        System.out.println(buildMessage(event).toString());
+        System.out.println(msg);
         super.onGuildMemberJoin(event);
     }
 
-    private CharSequence buildMessage(GuildMemberJoinEvent event) {
-        message = message.replaceAll("@USER", event.getMember().getUser().getAsMention());
-        return message;
+    private String buildMsg(String userMention, String msgFilePath) {
+        String msgRaw;
+        try {
+            msgRaw = readMsgFromFile(msgFilePath);
+        } catch (IOException | ParseException e) {
+            // message file does not exist or is invalid, create new message file
+            msgRaw = DEFAULT_WELCOME_MSG;
+            createMsgFile(msgFilePath, DEFAULT_WELCOME_MSG);
+        }
+        // add mentions of user
+        return msgRaw.replaceAll("@USER", userMention);
     }
 
-    public static void createJSONWithDefaultMessage() {
+    private void createMsgFile(String msgFilePath, String msg) {
         JSONObject obj = new JSONObject();
-        String message = welcomeMessageSplit1 + "@USER" + welcomeMessageSplit2;
-        obj.put("message", message);
+        obj.put("message", msg);
 
         try {
-            FileWriter file = new FileWriter(filePath);
+            FileWriter file = new FileWriter(msgFilePath);
             file.write(obj.toString());
             file.flush();
             file.close();
@@ -59,47 +60,23 @@ public class UserJoinedListener extends ListenerAdapter {
         }
     }
 
-    private void readFromFile() {
-        File file = new File(filePath);
-        if (file.isFile()) {
-            JSONObject jsonObject = createJSONObject();
-            handleJSONObject(jsonObject);
+    private String readMsgFromFile(String msgFilePath) throws FileNotFoundException, IOException, ParseException {
+        File file = new File(msgFilePath);
+        if (!file.isFile()) {
+            throw new FileNotFoundException("The provided path " + msgFilePath + " is not a file.");
         }
+
+        JSONObject jsonObject = createJSONObject(file);
+        if (!jsonObject.containsKey("message")) {
+            throw new IOException("The provided json does not contain a message key.");
+        }
+
+        return (String) jsonObject.get("message");
     }
 
-    private JSONObject createJSONObject() {
-        File file = new File(filePath);
+    private JSONObject createJSONObject(File msgFile) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
-        JSONObject obj = null;
-
-        try {
-            FileReader fileReader = new FileReader(file);
-            obj = (JSONObject) parser.parse(fileReader);
-            readableFile = true;
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            readableFile = false;
-        }
-
-        return obj;
+        FileReader fileReader = new FileReader(msgFile);
+        return (JSONObject) parser.parse(fileReader);
     }
-
-    private void handleJSONObject(JSONObject jsonObject) {
-        try {
-            if (jsonObject.containsKey("message")) {
-                message = (String) jsonObject.get("message");
-            } else {
-                readableFile = false;
-            }
-        } catch (NullPointerException e) {
-            readableFile = false;
-        }
-
-
-    }
-
-
-
-
-
 }
