@@ -9,9 +9,10 @@ import java.io.FileNotFoundException;
 
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+// import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class UserJoinedListener extends ListenerAdapter {
 
@@ -37,7 +38,7 @@ public class UserJoinedListener extends ListenerAdapter {
         String msgRaw;
         try {
             msgRaw = readMsgFromFile(msgFilePath);
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             // message file does not exist or is invalid, create new message file
             msgRaw = DEFAULT_WELCOME_MSG;
             createMsgFile(msgFilePath, DEFAULT_WELCOME_MSG);
@@ -47,12 +48,13 @@ public class UserJoinedListener extends ListenerAdapter {
     }
 
     private void createMsgFile(String msgFilePath, String msg) {
-        JSONObject obj = new JSONObject();
-        obj.put("message", msg);
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode node = om.createObjectNode();
+        node.put("test", "val");
 
         try {
             FileWriter file = new FileWriter(msgFilePath);
-            file.write(obj.toString());
+            file.write(node.toPrettyString());
             file.flush();
             file.close();
         } catch (IOException e) {
@@ -60,23 +62,23 @@ public class UserJoinedListener extends ListenerAdapter {
         }
     }
 
-    private String readMsgFromFile(String msgFilePath) throws FileNotFoundException, IOException, ParseException {
+    private String readMsgFromFile(String msgFilePath) throws FileNotFoundException, IOException {
         File file = new File(msgFilePath);
         if (!file.isFile()) {
             throw new FileNotFoundException("The provided path " + msgFilePath + " is not a file.");
         }
 
-        JSONObject jsonObject = createJSONObject(file);
-        if (!jsonObject.containsKey("message")) {
+        // JSONObject jsonObject = createJSONObject(file);
+        JsonNode node = createJsonNode(file);
+        if (!node.has("message")) {
             throw new IOException("The provided json does not contain a message key.");
         }
 
-        return (String) jsonObject.get("message");
+        return node.get("message").asText();
     }
 
-    private JSONObject createJSONObject(File msgFile) throws IOException, ParseException {
-        JSONParser parser = new JSONParser();
-        FileReader fileReader = new FileReader(msgFile);
-        return (JSONObject) parser.parse(fileReader);
+    private JsonNode createJsonNode(File msgFile) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readTree(msgFile);
     }
 }

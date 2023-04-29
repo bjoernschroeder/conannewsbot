@@ -1,6 +1,6 @@
 package de.karasuma.discordbot.conannews.pagehandler;
 
-import com.cedarsoftware.util.StringUtilities;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import de.karasuma.discordbot.conannews.CoolDownHandler;
 import de.karasuma.discordbot.conannews.WikiArticleChecker;
 import de.karasuma.discordbot.conannews.util.DateUtil;
@@ -140,7 +140,7 @@ public class UserPageHandler extends PageHandler {
             while(var9.hasNext()) {
                 JSONObject resultJSONObject = (JSONObject)var9.next();
                 String retrievedTitle = resultJSONObject.getString("title");
-                int distance = StringUtilities.levenshteinDistance(retrievedTitle, searchTermString);
+                int distance = new LevenshteinDistance().apply(retrievedTitle, searchTermString);
                 if (lowestDistance > distance) {
                     lowestDistance = distance;
                     result = resultJSONObject;
