@@ -5,10 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import net.dv8tion.jda.api.entities.Activity;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class FileReadAndWriter {
 
@@ -20,27 +21,17 @@ public class FileReadAndWriter {
         this.main = main;
     }
 
-    protected JSONObject createJSONObject(String filePathGameStatus) {
+    protected JsonNode createJSONObject(String filePathGameStatus) throws IOException {
         File file = new File(filePathGameStatus);
-        JSONParser parser = new JSONParser();
-        JSONObject obj = null;
-
-        try {
-            FileReader fileReader = new FileReader(file);
-            obj = (JSONObject) parser.parse(fileReader);
-            readableFile = true;
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            readableFile = false;
-        }
-
-        return obj;
+        ObjectMapper om = new ObjectMapper();
+        return om.readTree(file);
     }
 
     @SuppressWarnings("unchecked")
     protected void createJSONFile (Activity.ActivityType activityType, String activityTitle) {
-        JSONObject obj = new JSONObject();
-        obj.put("name", activityTitle);
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode node = om.createObjectNode();
+        node.put("name", activityTitle);
 
         ArrayList<Activity.ActivityType> activityTypes = new ArrayList<>();
         for (Activity.ActivityType type : Activity.ActivityType.values()) {
@@ -48,11 +39,11 @@ public class FileReadAndWriter {
         }
 
         long index = activityTypes.indexOf(activityType);
-        obj.put("typeIndex", index);
+        node.put("typeIndex", index);
 
         try {
             FileWriter file = new FileWriter(filePath);
-            file.write(obj.toString());
+            file.write(node.toPrettyString());
             file.flush();
             file.close();
         } catch (IOException e) {
@@ -63,27 +54,30 @@ public class FileReadAndWriter {
     protected void initGameStatusFromFile() {
         File file = new File(filePath);
         if (file.isFile()) {
-            JSONObject jsonObject = createJSONObject(filePath);
-            handleJSONObject(jsonObject);
+            try {
+                JsonNode node = createJSONObject(filePath);
+                handleJSONObject(node);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void handleJSONObject(JSONObject jsonObject) {
+    private void handleJSONObject(JsonNode jsonObject) {
         try {
-            if (jsonObject.containsKey("name") && jsonObject.containsKey("typeIndex")) {
-                String gameName = (String) jsonObject.get("name");
+            if (jsonObject.has("name") && jsonObject.has("typeIndex")) {
+                String gameName = jsonObject.get("name").asText();
 
                 ArrayList<Activity.ActivityType> activityTypes = new ArrayList<>();
                 for (Activity.ActivityType gameType : Activity.ActivityType.values()) {
                     activityTypes.add(gameType);
                 }
 
-                Long activityTypeIndex = (Long) jsonObject.get("typeIndex");
-                Integer index = Integer.valueOf(String.valueOf(activityTypeIndex));
+                int index = jsonObject.get("typeIndex").asInt(-1);
                 Activity.ActivityType activityType = null;
 
-                if (activityTypeIndex != null) {
-                    if (activityTypeIndex >= 0 && activityTypeIndex <= 3) {
+                if (index != -1) {
+                    if (index >= 0 && index <= 3) {
                         activityType = activityTypes.get(index);
                     } else {
                         activityType = activityTypes.get(0);
@@ -91,6 +85,7 @@ public class FileReadAndWriter {
 
                 }
 
+                // TODO: File reader should not set activity
                 main.getWelcomeBot().setActivityTitle(gameName);
                 main.getWikiBot().setActivityType(activityType);
                 readableFile = true;
